@@ -29,9 +29,7 @@ class UsuarioController {
     @Autowired
     private lateinit var authenticationManager: AuthenticationManager
 
-    /*
-    MÉTODO PARA INSERTAR UN USUARIO
-     */
+    //register
     @PostMapping("/register")
     fun register(
         @RequestBody newUsuario: Usuario
@@ -41,17 +39,15 @@ class UsuarioController {
         // -> La obviamos por ahora
 
         // Llamar al UsuarioService para insertar un usuario
-
+        var usuarioRegistrado=usuarioService.registerUsuario(newUsuario)
 
         // Devolver el usuario insertado
-        return ResponseEntity(null, HttpStatus.CREATED) // Cambiar null por el usuario insertado
+        return ResponseEntity(usuarioRegistrado, HttpStatus.CREATED) // Cambiar null por el usuario insertado
 
     }
 
 
-    /*
-    MÉTODO (ENDPOINT) PARA HACER UN LOGIN
-     */
+    //register
     @PostMapping("/login")
     fun login(@RequestBody usuario: Usuario) : ResponseEntity<Any>? {
 

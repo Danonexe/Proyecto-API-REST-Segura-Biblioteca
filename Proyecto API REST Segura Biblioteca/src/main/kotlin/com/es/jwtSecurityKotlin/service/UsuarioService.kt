@@ -8,6 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.stream.Collectors
@@ -18,51 +20,43 @@ class UsuarioService : UserDetailsService {
     @Autowired
     private lateinit var usuarioRepository: UsuarioRepository
 
+    @Autowired
+    private lateinit var passwordEncoder: PasswordEncoder
 
-    /*
-    TODO
-     */
     override fun loadUserByUsername(username: String?): UserDetails {
-        var usuario: Usuario = usuarioRepository
+        val usuario: Usuario = usuarioRepository
             .findByUsername(username!!)
-            .orElseThrow()
-
+            .orElseThrow { UsernameNotFoundException("Usuario no encontrado: $username") }
 
         return User.builder()
             .username(usuario.username)
             .password(usuario.password)
             .roles(usuario.roles)
-            .build( )
+            .build()
     }
 
+    fun registerUsuario(usuario: Usuario): Usuario {
+        // Comprobamos que el usuario no exista en la base de datos
+        val username = usuario.username ?: throw IllegalArgumentException("El username no puede ser nulo.")
 
-    /*
-    MÉTODO PARA INSERTAR UN USUARIO
-     */
-    fun registerUsuario(usuario: Usuario) : Usuario? {
+        if (usuarioRepository.findByUsername(usuario.username!!).isPresent) {
+            throw IllegalArgumentException("El usuario con username ${usuario.username} ya existe.")
+        }
 
-        // Comprobamos que el usuario no existe en la base de datos
+        // Hasheamos la contraseña del usuario
+        val hashedPassword = passwordEncoder.encode(usuario.password)
 
+        // Creamos un nuevo usuario con todos los campos necesarios
+        val newUsuario = Usuario(
+            id = null, //generado automáticamente
+            username = usuario.username,
+            password = hashedPassword,
+            nombre = usuario.nombre,
+            apellidos = usuario.apellidos,
+            roles = usuario.roles
+        )
 
-        // Creamos la instancia de Usuario
-
-
-        /*
-         La password del newUsuario debe estar hasheada, así que usamos el passwordEncoder que tenemos definido.
-         ¿De dónde viene ese passwordEncoder?
-         El objeto passwordEncoder lo tenemos que inyectar, y viene desde la clase SecurityConfig
-         */
-
-
-        // Guardamos el newUsuario en la base de datos... igual que siempre
-
-
-
-        // Devolvemos el Usuario insertado en la BDD
-        return null // Cambiar null por el usuario
-
+        // Guardamos el usuario en la base de datos
+        return usuarioRepository.save(newUsuario)
     }
-
-
-
 }
