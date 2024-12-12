@@ -22,6 +22,4 @@ data class Libro(
     @Column(nullable = false)
     var fecha_de_publicacion: Date? = null,
 
-    @OneToMany(mappedBy = "libro", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var prestamos: List<PrestamoLibro>? = null
 )

@@ -18,8 +18,5 @@ data class Editorial(
     var apellidos: String? = null,
 
     @Column(nullable = false)
-    var fecha_de_nacimiento: Date? = null,
-
-    @OneToMany(mappedBy = "editorial", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var libros: List<Libro>? = null
+    var fecha_de_nacimiento: Date? = null
 )
