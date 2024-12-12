@@ -14,9 +14,4 @@ data class Editorial(
     @Column(nullable = false)
     var nombre: String? = null,
 
-    @Column(nullable = false)
-    var apellidos: String? = null,
-
-    @Column(nullable = false)
-    var fecha_de_nacimiento: Date? = null
 )

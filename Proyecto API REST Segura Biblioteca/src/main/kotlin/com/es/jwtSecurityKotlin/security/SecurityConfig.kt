@@ -39,6 +39,10 @@ class SecurityConfig {
             .authorizeHttpRequests { auth -> auth
                 .requestMatchers("/usuarios/login").permitAll()
                 .requestMatchers("/usuarios/register").permitAll()
+                .requestMatchers("/libros/create").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,"/libros").permitAll()
+                .requestMatchers(HttpMethod.GET,"/libros/{id}").permitAll()
+                .requestMatchers(HttpMethod.PUT,"/libros/{id}").hasRole("ADMIN")
                 .requestMatchers("/rutas_protegidas/usuartio_autenticado").authenticated()
                 .requestMatchers(HttpMethod.GET,"/rutas_protegidas/recurso/{id}").permitAll()
                 .requestMatchers(HttpMethod.DELETE,"/rutas_protegidas/recurso/{id}").hasRole("ADMIN")

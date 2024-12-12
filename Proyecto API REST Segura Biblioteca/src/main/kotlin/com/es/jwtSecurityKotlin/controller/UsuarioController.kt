@@ -42,7 +42,7 @@ class UsuarioController {
         var usuarioRegistrado=usuarioService.registerUsuario(newUsuario)
 
         // Devolver el usuario insertado
-        return ResponseEntity(usuarioRegistrado, HttpStatus.CREATED) // Cambiar null por el usuario insertado
+        return ResponseEntity(usuarioRegistrado, HttpStatus.CREATED)
 
     }
 
