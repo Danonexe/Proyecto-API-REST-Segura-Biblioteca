@@ -17,7 +17,7 @@ data class Libro(
 
     @ManyToOne
     @JoinColumn(name = "id_editorial", nullable = false)
-    var editorial: Editorial,
+    var editorial: Editorial? = null,
 
     @Column(nullable = false)
     var fecha_de_publicacion: Date? = null,

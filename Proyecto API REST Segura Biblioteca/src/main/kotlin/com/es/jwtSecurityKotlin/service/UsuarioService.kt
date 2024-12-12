@@ -53,7 +53,7 @@ class UsuarioService : UserDetailsService {
             password = hashedPassword,
             nombre = usuario.nombre,
             apellidos = usuario.apellidos,
-            roles = usuario.roles
+            roles = "USER" //para que no se pueda registrar como ADMIN
         )
 
         // Guardamos el usuario en la base de datos
