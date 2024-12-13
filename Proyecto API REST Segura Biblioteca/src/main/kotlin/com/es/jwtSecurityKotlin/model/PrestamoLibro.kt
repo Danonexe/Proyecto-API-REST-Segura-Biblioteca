@@ -10,13 +10,16 @@ data class PrestamoLibro(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_prestamo: Long? = null,
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_libro", nullable = false)
     var libro: Libro? = null,
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     var usuario: Usuario? = null,
+
+    @Column(nullable = false)
+    var devuelto: Boolean = false,
 
     @Column(nullable = false)
     var fecha_prestamo: Date? = null,

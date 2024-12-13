@@ -29,25 +29,19 @@ class UsuarioController {
     @Autowired
     private lateinit var authenticationManager: AuthenticationManager
 
-    //register
+    // Register
     @PostMapping("/register")
     fun register(
         @RequestBody newUsuario: Usuario
     ) : ResponseEntity<Usuario?>? {
-
-        // Comprobación mínima
-        // -> La obviamos por ahora
-
-        // Llamar al UsuarioService para insertar un usuario
         var usuarioRegistrado=usuarioService.registerUsuario(newUsuario)
 
-        // Devolver el usuario insertado
         return ResponseEntity(usuarioRegistrado, HttpStatus.CREATED)
 
     }
 
 
-    //register
+    // Login
     @PostMapping("/login")
     fun login(@RequestBody usuario: Usuario) : ResponseEntity<Any>? {
 
@@ -59,11 +53,6 @@ class UsuarioController {
         }
         var token=""
         token=tokenService.generarToken(authentication)
-
-
-        println(authentication)
-
-
         return ResponseEntity( mapOf("mensaje" to "Login exitoso","token" to token), HttpStatus.OK)
     }
 
