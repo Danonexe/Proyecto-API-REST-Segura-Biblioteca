@@ -30,25 +30,22 @@ Este proyecto implementa una base de datos para gestionar una biblioteca. La bas
 |--------------------|--------------------------------------------------------|
 | `id_editorial`     | Se genera automáticamente.                            |
 | `nombre`           | No puede ser nulo.                                    |
-| `apellidos`        | No puede ser nulo.                                    |
-| `fecha_de_nacimiento` | No puede ser nulo y debe ser una fecha.             |
-| `libros`           | No puede ser nulo y tiene relación 1 a muchos con `Libros`. |
 
 ### Tabla: Prestamo_Libros
 | Campo              | Restricciones                                          |
 |--------------------|--------------------------------------------------------|
 | `id_prestamo`      | Se genera automáticamente.                            |
-| `libro`            | No puede ser nulo y tiene relación 1 a 1 con `Libros`. |
-| `usuario`          | No puede ser nulo y tiene relación 1 a 1 con `Usuarios`. |
+| `libro`            | No puede ser nulo y tiene relación 1 a muchos con `Libros`. |
+| `usuario`          | No puede ser nulo y tiene relación 1 a muchos con `Usuarios`. |
 | `fecha_prestamo`   | No puede ser nulo y debe ser una fecha.                |
 | `limite_prestamo`  | No puede ser nulo, debe ser una fecha y es una semana más al préstamo. |
 
 ---
 
 ## Relación entre Tablas
-- **Usuarios** se relaciona con **Prestamo_Libros** (1 a 1).
-- **Libros** se relaciona con **Editoriales** (1 a 1).
-- **Libros** se relaciona con **Prestamo_Libros** (1 a 1).
+- **Usuarios** se relaciona con **Prestamo_Libros** (1 a muchos).
+- **Libros** se relaciona con **Editoriales** (muchos a 1).
+- **Libros** se relaciona con **Prestamo_Libros** (1 a muchos).
 - **Editoriales** se relaciona con **Libros** (1 a muchos).
 
 Este diseño asegura la integridad referencial y facilita la gestión de usuarios, libros, editoriales, y préstamos en la biblioteca.
