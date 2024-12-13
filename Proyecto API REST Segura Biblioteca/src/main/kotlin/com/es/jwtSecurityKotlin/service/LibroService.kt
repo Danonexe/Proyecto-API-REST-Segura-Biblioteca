@@ -52,7 +52,7 @@ class LibroService {
         // Guardamos los cambios en la base de datos
         return libroRepository.save(libroExistente)
     }
-
+    // Borrar Libro
     fun deleteLibro(libro: Libro) {
         val libroExistente = libroRepository.findByTituloAndEditorial(libro.titulo!!, libro.editorial!!)
             .orElseThrow { IllegalArgumentException("No se encontró un libro con el título: ${libro.titulo} y la editorial: ${libro.editorial}") }
