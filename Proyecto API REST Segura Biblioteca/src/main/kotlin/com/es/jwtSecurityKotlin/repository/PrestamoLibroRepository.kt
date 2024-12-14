@@ -9,6 +9,6 @@ import java.util.*
 
 @Repository
 interface PrestamoLibroRepository : JpaRepository<PrestamoLibro, Long> {
-    fun findByUsuarioIdAndDevueltoFalse(usuarioId: Long): Optional<List<PrestamoLibro>>
-    fun findByLibroIdAndDevueltoFalse(libroId: Long): Optional<PrestamoLibro>
+    fun existsByUsuarioAndDevueltoFalse(usuario: Usuario): Boolean
+    fun existsByLibroAndDevueltoFalse(libro: Libro): Boolean
 }

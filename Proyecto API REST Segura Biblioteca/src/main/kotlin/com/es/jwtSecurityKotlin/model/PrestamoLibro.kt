@@ -4,26 +4,24 @@ import jakarta.persistence.*
 import java.util.*
 
 @Entity
-@Table(name = "prestamo_libros")
 data class PrestamoLibro(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id_prestamo: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne
-    @JoinColumn(name = "id_libro", nullable = false)
-    var libro: Libro? = null,
+    @JoinColumn(name = "libro_id")
+    val libro: Libro,
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    var usuario: Usuario? = null,
+    @JoinColumn(name = "usuario_id")
+    val usuario: Usuario,
 
-    @Column(nullable = false)
     var devuelto: Boolean = false,
 
-    @Column(nullable = false)
-    var fecha_prestamo: Date? = null,
+    @Temporal(TemporalType.DATE)
+    val fecha_prestamo: Date,
 
-    @Column(nullable = false)
-    var limite_prestamo: Date? = null
+    @Temporal(TemporalType.DATE)
+    val limite_prestamo: Date
 )

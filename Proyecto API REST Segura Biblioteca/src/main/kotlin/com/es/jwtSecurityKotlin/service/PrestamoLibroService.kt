@@ -22,51 +22,68 @@ class PrestamoLibroService {
     @Autowired
     private lateinit var prestamoLibroRepository: PrestamoLibroRepository
 
-    // Crear un nuevo préstamo
-    fun createPrestamoLibro(usuarioId: Long, libroId: Long): PrestamoLibro {
-        // Primero comprovaciones
-        val usuario = usuarioRepository.findById(usuarioId)
-            .orElseThrow { IllegalArgumentException("No se encontró un usuario con ID: $usuarioId") }
+    fun setPrestamo(username: String, libro: Libro): PrestamoLibro {
+        // Comprobar si el usuario existe
+        val usuario = usuarioRepository.findByUsername(username)
+            .orElseThrow { IllegalArgumentException("No se encontró un usuario con el nombre de usuario: $username") }
 
-        val libro = libroRepository.findById(libroId)
-            .orElseThrow { IllegalArgumentException("No se encontró un libro con ID: $libroId") }
+        // Comprobar si el libro existe
+        val libroExistente = libroRepository.findById(libro.id_libro!!)
+            .orElseThrow { IllegalArgumentException("No se encontró un libro con el ID: ${libro.id_libro}") }
 
-        // Verificar si el usuario tiene préstamos sin devolver
-        val prestamosPendientes = prestamoLibroRepository.findByUsuarioIdAndDevueltoFalse(usuarioId)
-        if (prestamosPendientes.isPresent && prestamosPendientes.get().isNotEmpty()) {
-            throw IllegalArgumentException("El usuario ya tiene un préstamo sin devolver.")
+        // Comprobar si el usuario tiene un préstamo activo sin devolver
+        if (prestamoLibroRepository.existsByUsuarioAndDevueltoFalse(usuario)) {
+            throw IllegalArgumentException("El usuario $username ya tiene un préstamo activo sin devolver.")
         }
 
-        // Verificar si el libro ya está prestado
-        val prestamoLibroExistente = prestamoLibroRepository.findByLibroIdAndDevueltoFalse(libroId)
-        if (prestamoLibroExistente.isPresent) {
-            throw IllegalArgumentException("El libro ya está prestado a otro usuario.")
+        // Comprobar si el libro ya está siendo prestado y no ha sido devuelto
+        if (prestamoLibroRepository.existsByLibroAndDevueltoFalse(libroExistente)) {
+            throw IllegalArgumentException("El libro con título '${libroExistente.titulo}' ya está siendo prestado.")
         }
 
-        // Crear un nuevo préstamo
+        // Crear un nuevo préstamo con la fecha de préstamo actual y límite de devolución
         val fechaPrestamo = Date()
         val limitePrestamo = Calendar.getInstance().apply {
             time = fechaPrestamo
-            add(Calendar.DAY_OF_MONTH, 30)
-        }.time
+            add(Calendar.DAY_OF_MONTH, 30)  }.time
 
         val nuevoPrestamo = PrestamoLibro(
-            libro = libro,
+            libro = libroExistente,
             usuario = usuario,
             devuelto = false,
             fecha_prestamo = fechaPrestamo,
             limite_prestamo = limitePrestamo
         )
 
+        // Guardar el préstamo en la base de datos
         return prestamoLibroRepository.save(nuevoPrestamo)
     }
 
-    // Devolver un préstamo
-    fun devolverPrestamo(prestamoId: Long) {
+    // Marcar como devuelto
+    fun marcarComoDevuelto(prestamoId: Long): PrestamoLibro {
+        // Buscar el préstamo por ID
         val prestamo = prestamoLibroRepository.findById(prestamoId)
             .orElseThrow { IllegalArgumentException("No se encontró un préstamo con ID: $prestamoId") }
 
+        // Verificar si el préstamo ya está marcado como devuelto
+        if (prestamo.devuelto) {
+            throw IllegalArgumentException("El préstamo con ID: $prestamoId ya está marcado como devuelto.")
+        }
+
+        // Marcar como devuelto
         prestamo.devuelto = true
-        prestamoLibroRepository.save(prestamo)
+        return prestamoLibroRepository.save(prestamo)
     }
+
+    // Get todos los prestamos
+    fun getTodosLosPrestamos(): List<PrestamoLibro> {
+        return prestamoLibroRepository.findAll()
+    }
+
+    // Get prestamo por ID
+    fun getPrestamoPorId(prestamoId: Long): PrestamoLibro {
+        return prestamoLibroRepository.findById(prestamoId)
+            .orElseThrow { IllegalArgumentException("No se encontró un préstamo con ID: $prestamoId") }
+    }
+
 }
