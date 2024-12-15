@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.stream.Collectors
-
 @Service
 class UsuarioService : UserDetailsService {
 
@@ -36,27 +35,62 @@ class UsuarioService : UserDetailsService {
     }
 
     fun registerUsuario(usuario: Usuario): Usuario {
-        // Comprobamos que el usuario no exista en la base de datos
         val username = usuario.username ?: throw IllegalArgumentException("El username no puede ser nulo.")
 
         if (usuarioRepository.findByUsername(usuario.username!!).isPresent) {
             throw IllegalArgumentException("El usuario con username ${usuario.username} ya existe.")
         }
 
-        // Hasheamos la contraseña del usuario
         val hashedPassword = passwordEncoder.encode(usuario.password)
 
-        // Creamos un nuevo usuario con todos los campos necesarios
         val newUsuario = Usuario(
-            id = null, //generado automáticamente
+            id = null,
             username = usuario.username,
             password = hashedPassword,
             nombre = usuario.nombre,
             apellidos = usuario.apellidos,
-            roles = usuario.roles //para que no se pueda registrar como ADMIN
+            roles = usuario.roles
         )
 
-        // Guardamos el usuario en la base de datos
         return usuarioRepository.save(newUsuario)
+    }
+
+    fun editUsuario(id: Long, usuarioActualizado: Usuario): Usuario {
+        val usuarioExistente = usuarioRepository.findById(id).orElseThrow {
+            IllegalArgumentException("Usuario con ID $id no encontrado.")
+        }
+
+        val hashedPassword = if (usuarioActualizado.password != null) {
+            passwordEncoder.encode(usuarioActualizado.password)
+        } else {
+            usuarioExistente.password
+        }
+
+        val usuarioEditado = usuarioExistente.copy(
+            username = usuarioActualizado.username ?: usuarioExistente.username,
+            password = hashedPassword,
+            nombre = usuarioActualizado.nombre ?: usuarioExistente.nombre,
+            apellidos = usuarioActualizado.apellidos ?: usuarioExistente.apellidos,
+            roles = usuarioActualizado.roles ?: usuarioExistente.roles
+        )
+
+        return usuarioRepository.save(usuarioEditado)
+    }
+
+    fun getUsuarioPorId(id: Long): Usuario {
+        return usuarioRepository.findById(id).orElseThrow {
+            IllegalArgumentException("Usuario con ID $id no encontrado.")
+        }
+    }
+
+    fun getAllUsuarios(): List<Usuario> {
+        return usuarioRepository.findAll()
+    }
+
+    fun deleteUsuarioPorId(id: Long) {
+        if (!usuarioRepository.existsById(id)) {
+            throw IllegalArgumentException("Usuario con ID $id no encontrado.")
+        }
+        usuarioRepository.deleteById(id)
     }
 }
