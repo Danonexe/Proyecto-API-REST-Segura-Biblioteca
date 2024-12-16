@@ -30,23 +30,23 @@ class LibroController {
     }
 
     // Obtener un libro por su título
-    @GetMapping("/{titulo}")
-    fun getLibroByTitulo(@PathVariable titulo: String): ResponseEntity<Libro> {
-        val libro = libroService.getLibroByTitulo(titulo)
+    @GetMapping("/{id}")
+    fun getLibroByTitulo(@PathVariable id: Long): ResponseEntity<Libro> {
+        val libro = libroService.getLibroById(id)
         return ResponseEntity(libro, HttpStatus.OK)
     }
 
     // Actualizar un libro existente
-    @PutMapping("/{titulo}")
-    fun updateLibro(@PathVariable titulo: String, @RequestBody updatedLibro: Libro): ResponseEntity<Libro> {
-        val libroActualizado = libroService.updateLibro(titulo, updatedLibro)
+    @PutMapping("/{id}")
+    fun updateLibro(@PathVariable id: Long, @RequestBody updatedLibro: Libro): ResponseEntity<Libro> {
+        val libroActualizado = libroService.updateLibro(id, updatedLibro)
         return ResponseEntity(libroActualizado, HttpStatus.OK)
     }
 
-    // Eliminar un libro
-    @DeleteMapping("/delete")
-    fun deleteLibro(@RequestBody libro: Libro): ResponseEntity<Void> {
-        libroService.deleteLibro(libro)
+    // Eliminar un libro por ID
+    @DeleteMapping("/{id}")
+    fun deleteLibro(@PathVariable id: Long): ResponseEntity<Void> {
+        libroService.deleteLibroById(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 }

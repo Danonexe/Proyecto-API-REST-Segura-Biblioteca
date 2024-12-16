@@ -32,16 +32,16 @@ class LibroService {
         return libroRepository.findAll()
     }
 
-    // Devuelve un libro por su titulo
-    fun getLibroByTitulo(titulo: String): Libro {
-        return libroRepository.findByTitulo(titulo)
-            .orElseThrow { IllegalArgumentException("No se encontró un libro con el título: $titulo") }
+    // Devuelve un libro por su id
+    fun getLibroById(id: Long): Libro {
+        return libroRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("No se encontró un libro con el id: $id") }
     }
 
     // Actualiza un libro existente
-    fun updateLibro(titulo: String, updatedLibro: Libro): Libro {
-        val libroExistente = libroRepository.findByTitulo(titulo)
-            .orElseThrow { IllegalArgumentException("No se encontró un libro con el título: $titulo") }
+    fun updateLibro(id: Long, updatedLibro: Libro): Libro {
+        val libroExistente = libroRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("No se encontró un libro con el id: $id") }
 
         // Actualizamos los valores del libro existente
         libroExistente.titulo = updatedLibro.titulo ?: libroExistente.titulo
@@ -53,16 +53,12 @@ class LibroService {
         return libroRepository.save(libroExistente)
     }
     // Borrar Libro
-    fun deleteLibro(libro: Libro) {
-        val libroExistente = libroRepository.findByTituloAndEditorial(libro.titulo!!, libro.editorial!!)
-            .orElseThrow { IllegalArgumentException("No se encontró un libro con el título: ${libro.titulo} y la editorial: ${libro.editorial}") }
+    // Borrar Libro
+    fun deleteLibroById(id: Long) {
+        val libroExistente = libroRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("No se encontró un libro con el id: $id") }
 
-        // Comprobar si los datos coinciden
-        if (libroExistente == libro) {
-            libroRepository.delete(libroExistente)
-        } else {
-            throw IllegalArgumentException("El libro encontrado no coincide exactamente con el proporcionado.")
-        }
+        libroRepository.delete(libroExistente)
     }
 
 

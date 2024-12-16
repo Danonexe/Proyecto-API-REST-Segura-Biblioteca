@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import java.util.*
 
 @Entity
+@Table(name = "prestamos_libros")
 data class PrestamoLibro(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

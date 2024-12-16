@@ -37,16 +37,37 @@ class SecurityConfig {
         return http
             .csrf { csrf -> csrf.disable() } // Cross-Site Forgery
             .authorizeHttpRequests { auth -> auth
-                .requestMatchers("/usuarios/login").permitAll()
-                .requestMatchers("/usuarios/register").permitAll()
-                .requestMatchers("/libros/create").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET,"/libros").permitAll()
-                .requestMatchers(HttpMethod.GET,"/libros/{id}").permitAll()
-                .requestMatchers(HttpMethod.PUT,"/libros/{id}").hasRole("ADMIN")
-                .requestMatchers("/rutas_protegidas/usuartio_autenticado").authenticated()
-                .requestMatchers(HttpMethod.GET,"/rutas_protegidas/recurso/{id}").permitAll()
-                .requestMatchers(HttpMethod.DELETE,"/rutas_protegidas/recurso/{id}").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                // UsuartioController
+                .requestMatchers(HttpMethod.POST,"/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST,"/usuarios/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
+                .requestMatchers(HttpMethod.GET, "/usuarios/{id}").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/usuarios/{id}").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").permitAll()
+
+                // EditorialController
+                .requestMatchers(HttpMethod.POST, "/editoriales/create").permitAll()
+                .requestMatchers(HttpMethod.GET, "/editoriales").permitAll()
+                .requestMatchers(HttpMethod.GET, "/editoriales/{nombre}").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/editoriales/{nombre}").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/editoriales/{nombre}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/editoriales/{nombreEditorial}/libros").permitAll()
+
+                // LibroController
+                .requestMatchers(HttpMethod.POST, "/libros/create").permitAll()
+                .requestMatchers(HttpMethod.GET, "/libros").permitAll()
+                .requestMatchers(HttpMethod.GET, "/libros/{id}").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/libros/{id}").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/libros/{id}").permitAll()
+
+                // PrestamoLibroController
+                .requestMatchers(HttpMethod.POST, "/prestamos/create").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/prestamos/devolver/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/prestamos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/prestamos/{id}").permitAll()
+                //.requestMatchers("/rutas_protegidas/usuartio_autenticado").authenticated()
+                //.requestMatchers(HttpMethod.DELETE,"/rutas_protegidas/recurso/{id}").hasRole("ADMIN")
+                .anyRequest().permitAll()
             } // Los recursos protegidos y publicos
             .oauth2ResourceServer { oauth2-> oauth2.jwt(Customizer.withDefaults()) }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
