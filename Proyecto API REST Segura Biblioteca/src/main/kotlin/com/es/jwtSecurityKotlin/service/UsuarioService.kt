@@ -22,6 +22,7 @@ class UsuarioService : UserDetailsService {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
+    @Override
     override fun loadUserByUsername(username: String?): UserDetails {
         val usuario: Usuario = usuarioRepository
             .findByUsername(username!!)

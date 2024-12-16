@@ -40,33 +40,31 @@ class SecurityConfig {
                 // UsuartioController
                 .requestMatchers(HttpMethod.POST,"/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/usuarios/register").permitAll()
-                .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
-                .requestMatchers(HttpMethod.GET, "/usuarios/{id}").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/usuarios/{id}").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN")
 
                 // EditorialController
-                .requestMatchers(HttpMethod.POST, "/editoriales/create").permitAll()
-                .requestMatchers(HttpMethod.GET, "/editoriales").permitAll()
-                .requestMatchers(HttpMethod.GET, "/editoriales/{nombre}").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/editoriales/{nombre}").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/editoriales/{nombre}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/editoriales/{nombreEditorial}/libros").permitAll()
+                .requestMatchers(HttpMethod.POST, "/editoriales/create").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/editoriales").authenticated()
+                .requestMatchers(HttpMethod.GET, "/editoriales/{nombre}").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/editoriales/{nombre}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/editoriales/{nombre}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/editoriales/{nombreEditorial}/libros").authenticated()
 
                 // LibroController
-                .requestMatchers(HttpMethod.POST, "/libros/create").permitAll()
-                .requestMatchers(HttpMethod.GET, "/libros").permitAll()
-                .requestMatchers(HttpMethod.GET, "/libros/{id}").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/libros/{id}").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/libros/{id}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/libros/create").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/libros").authenticated()
+                .requestMatchers(HttpMethod.GET, "/libros/{id}").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/libros/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/libros/{id}").hasRole("ADMIN")
 
                 // PrestamoLibroController
-                .requestMatchers(HttpMethod.POST, "/prestamos/create").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/prestamos/devolver/{id}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/prestamos").permitAll()
-                .requestMatchers(HttpMethod.GET, "/prestamos/{id}").permitAll()
-                //.requestMatchers("/rutas_protegidas/usuartio_autenticado").authenticated()
-                //.requestMatchers(HttpMethod.DELETE,"/rutas_protegidas/recurso/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/prestamos/create").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/prestamos/devolver/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/prestamos").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/prestamos/{id}").hasRole("ADMIN")
                 .anyRequest().permitAll()
             } // Los recursos protegidos y publicos
             .oauth2ResourceServer { oauth2-> oauth2.jwt(Customizer.withDefaults()) }
