@@ -1,18 +1,17 @@
 package com.es.jwtSecurityKotlin.service
 
+import com.es.jwtSecurityKotlin.exception.BadRequestException
+import com.es.jwtSecurityKotlin.exception.ConflictException
+import com.es.jwtSecurityKotlin.exception.NotFoundException
 import com.es.jwtSecurityKotlin.model.Usuario
 import com.es.jwtSecurityKotlin.repository.UsuarioRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.util.*
-import java.util.stream.Collectors
+
 @Service
 class UsuarioService : UserDetailsService {
 
@@ -26,7 +25,7 @@ class UsuarioService : UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails {
         val usuario: Usuario = usuarioRepository
             .findByUsername(username!!)
-            .orElseThrow { UsernameNotFoundException("Usuario no encontrado: $username") }
+            .orElseThrow { NotFoundException("Usuario no encontrado: $username") }
 
         return User.builder()
             .username(usuario.username)
@@ -36,10 +35,14 @@ class UsuarioService : UserDetailsService {
     }
 
     fun registerUsuario(usuario: Usuario): Usuario {
-        val username = usuario.username ?: throw IllegalArgumentException("El username no puede ser nulo.")
+        val username = usuario.username ?: throw BadRequestException("El username no puede ser nulo.")
 
         if (usuarioRepository.findByUsername(usuario.username!!).isPresent) {
-            throw IllegalArgumentException("El usuario con username ${usuario.username} ya existe.")
+            throw ConflictException("El usuario con username ${usuario.username} ya existe.")
+        }
+
+        if (usuario.password == null || usuario.password!!.length < 7) {
+            throw BadRequestException("La contraseña debe tener al menos 7 caracteres.")
         }
 
         val hashedPassword = passwordEncoder.encode(usuario.password)
@@ -58,7 +61,7 @@ class UsuarioService : UserDetailsService {
 
     fun editUsuario(id: Long, usuarioActualizado: Usuario): Usuario {
         val usuarioExistente = usuarioRepository.findById(id).orElseThrow {
-            IllegalArgumentException("Usuario con ID $id no encontrado.")
+            NotFoundException("Usuario con ID $id no encontrado.")
         }
 
         val hashedPassword = if (usuarioActualizado.password != null) {
@@ -80,7 +83,7 @@ class UsuarioService : UserDetailsService {
 
     fun getUsuarioPorId(id: Long): Usuario {
         return usuarioRepository.findById(id).orElseThrow {
-            IllegalArgumentException("Usuario con ID $id no encontrado.")
+            NotFoundException("Usuario con ID $id no encontrado.")
         }
     }
 
@@ -90,7 +93,7 @@ class UsuarioService : UserDetailsService {
 
     fun deleteUsuarioPorId(id: Long) {
         if (!usuarioRepository.existsById(id)) {
-            throw IllegalArgumentException("Usuario con ID $id no encontrado.")
+            throw NotFoundException("Usuario con ID $id no encontrado.")
         }
         usuarioRepository.deleteById(id)
     }

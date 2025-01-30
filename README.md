@@ -1,51 +1,57 @@
 # Proyecto-API-REST-Segura-Biblioteca
 
-Daniel Hernández Gómez
+## Autor
+**Daniel Hernández Gómez**
 
-Este proyecto implementa una base de datos para gestionar una biblioteca. La base de datos contiene cuatro tablas principales: `Usuarios`, `Libros`, `Editoriales`, y `Prestamo_Libros`, cada una con sus respectivos campos y restricciones.
+## Introducción del Proyecto
 
-## Estructura de las Tablas
+### **Título del Proyecto:**
+**Biblioteca Gómez**
 
-### Tabla: Usuarios
-| Campo          | Restricciones                                              |
-|----------------|------------------------------------------------------------|
-| `id_usuario`   | Se genera automáticamente.                                |
-| `username`     | Único y no puede ser nulo.                                |
-| `password`     | No puede ser nulo y se encripta.                          |
-| `nombre`       | No puede ser nulo.                                        |
-| `apellidos`    | No puede ser nulo.                                        |
-| `roles`        | Debe ser `Admin` o `User`.                                |
+### **Idea del Proyecto:**
+Crear una API que gestione el préstamo de libros y el registro de usuarios y libros mediante una base de datos.
 
-### Tabla: Libros
-| Campo                | Restricciones                                         |
-|----------------------|-------------------------------------------------------|
-| `id_libro`           | Se genera automáticamente.                           |
-| `titulo`             | No puede ser nulo.                                   |
-| `autor`              | No puede ser nulo.                                   |
-| `editorial`          | No puede ser nulo y tiene relación 1 a 1 con `Editoriales`. |
-| `fecha_de_publicacion` | No puede ser nulo y debe ser una fecha.             |
-
-### Tabla: Editoriales
-| Campo              | Restricciones                                          |
-|--------------------|--------------------------------------------------------|
-| `id_editorial`     | Se genera automáticamente.                            |
-| `nombre`           | No puede ser nulo.                                    |
-
-### Tabla: Prestamo_Libros
-| Campo              | Restricciones                                          |
-|--------------------|--------------------------------------------------------|
-| `id_prestamo`      | Se genera automáticamente.                            |
-| `libro`            | No puede ser nulo y tiene relación 1 a muchos con `Libros`. |
-| `usuario`          | No puede ser nulo y tiene relación 1 a muchos con `Usuarios`. |
-| `fecha_prestamo`   | No puede ser nulo y debe ser una fecha.                |
-| `limite_prestamo`  | No puede ser nulo, debe ser una fecha y es una semana más al préstamo. |
+### **Justificación:**
+La aplicación permite controlar la gestión de usuarios, libros y préstamos, mejorando la eficiencia y la experiencia tanto de clientes como de empleados.
 
 ---
 
-## Relación entre Tablas
-- **Usuarios** se relaciona con **Prestamo_Libros** (1 a muchos).
-- **Libros** se relaciona con **Editoriales** (muchos a 1).
-- **Libros** se relaciona con **Prestamo_Libros** (1 a muchos).
-- **Editoriales** se relaciona con **Libros** (1 a muchos).
+## Descripción de las Tablas
 
-Este diseño asegura la integridad referencial y facilita la gestión de usuarios, libros, editoriales, y préstamos en la biblioteca.
+### **Usuarios**
+Representa a los usuarios registrados en el sistema.
+- **id** (PK): Identificador único del usuario.
+- **username** (Unique, Not Null): Nombre de usuario.
+- **password** (Not Null): Contraseña cifrada.
+- **nombre** (Not Null): Nombre del usuario.
+- **apellidos** (Not Null): Apellidos del usuario.
+- **roles** (Not Null): Roles asignados al usuario.
+
+---
+
+### **Editoriales**
+Representa a las editoriales responsables de la publicación de libros.
+- **id_editorial** (PK): Identificador único de la editorial.
+- **nombre** (Not Null): Nombre de la editorial.
+
+---
+
+### **Libros**
+Representa a los libros disponibles en el sistema.
+- **id_libro** (PK): Identificador único del libro.
+- **titulo** (Not Null): Título del libro.
+- **autor** (Not Null): Autor del libro.
+- **editorial** (FK): Relación con la tabla Editoriales.
+- **fecha_de_publicacion** (Not Null): Fecha de publicación del libro.
+
+---
+
+### **PrestamoLibro**
+Representa el préstamo de un libro a un usuario.
+- **id** (PK): Identificador único del préstamo.
+- **libro** (FK): Relación con la tabla Libros.
+- **usuario** (FK): Relación con la tabla Usuarios.
+- **devuelto**: Indica si el libro ha sido devuelto.
+- **fecha_prestamo**: Fecha en la que se realizó el préstamo.
+- **limite_prestamo**: Fecha límite para devolver el libro.
+

@@ -1,5 +1,8 @@
 package com.es.jwtSecurityKotlin.service
 
+import com.es.jwtSecurityKotlin.exception.BadRequestException
+import com.es.jwtSecurityKotlin.exception.ConflictException
+import com.es.jwtSecurityKotlin.exception.NotFoundException
 import com.es.jwtSecurityKotlin.model.Editorial
 import com.es.jwtSecurityKotlin.model.Libro
 import com.es.jwtSecurityKotlin.repository.EditorialRepository
@@ -19,11 +22,11 @@ class EditorialService {
 
     // Crear una nueva editorial
     fun createEditorial(editorial: Editorial): Editorial {
-        val nombre = editorial.nombre ?: throw IllegalArgumentException("El nombre de la editorial no puede ser nulo.")
+        val nombre = editorial.nombre ?: throw BadRequestException("El nombre de la editorial no puede ser nulo.")
 
         // Comprobar si ya existe una editorial con el mismo nombre
         if (editorialRepository.findByNombre(nombre).isPresent) {
-            throw IllegalArgumentException("Ya existe una editorial con el nombre: $nombre")
+            throw ConflictException("Ya existe una editorial con el nombre: $nombre")
         }
 
         // Guardar la nueva editorial
@@ -38,13 +41,13 @@ class EditorialService {
     // Obtener una editorial por su nombre
     fun getEditorialByNombre(nombre: String): Editorial {
         return editorialRepository.findByNombre(nombre)
-            .orElseThrow { IllegalArgumentException("No se encontró una editorial con el nombre: $nombre") }
+            .orElseThrow { NotFoundException("No se encontró una editorial con el nombre: $nombre") }
     }
 
     // Actualizar una editorial existente
     fun updateEditorial(nombre: String, updatedEditorial: Editorial): Editorial {
         val editorialExistente = editorialRepository.findByNombre(nombre)
-            .orElseThrow { IllegalArgumentException("No se encontró una editorial con el nombre: $nombre") }
+            .orElseThrow { NotFoundException("No se encontró una editorial con el nombre: $nombre") }
 
         // Actualizar los campos de la editorial existente
         editorialExistente.nombre = updatedEditorial.nombre ?: editorialExistente.nombre
@@ -56,7 +59,7 @@ class EditorialService {
     // Eliminar una editorial
     fun deleteEditorial(nombre: String) {
         val editorialExistente = editorialRepository.findByNombre(nombre)
-            .orElseThrow { IllegalArgumentException("No se encontró una editorial con el nombre: $nombre") }
+            .orElseThrow { NotFoundException("No se encontró una editorial con el nombre: $nombre") }
 
         // Eliminar la editorial encontrada
         editorialRepository.delete(editorialExistente)
@@ -65,7 +68,7 @@ class EditorialService {
     // Obtener todos los libros de una editorial
     fun getLibrosByEditorial(nombreEditorial: String): Optional<Libro> {
         val editorial = editorialRepository.findByNombre(nombreEditorial)
-            .orElseThrow { IllegalArgumentException("No se encontró una editorial con el nombre: $nombreEditorial") }
+            .orElseThrow { NotFoundException("No se encontró una editorial con el nombre: $nombreEditorial") }
 
         return libroRepository.findByEditorial(editorial)
     }

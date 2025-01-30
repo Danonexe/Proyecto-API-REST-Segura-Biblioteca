@@ -1,8 +1,9 @@
 package com.es.jwtSecurityKotlin.service
 
+import com.es.jwtSecurityKotlin.exception.ConflictException
+import com.es.jwtSecurityKotlin.exception.NotFoundException
 import com.es.jwtSecurityKotlin.model.Libro
 import com.es.jwtSecurityKotlin.model.PrestamoLibro
-import com.es.jwtSecurityKotlin.model.Usuario
 import com.es.jwtSecurityKotlin.repository.LibroRepository
 import com.es.jwtSecurityKotlin.repository.PrestamoLibroRepository
 import com.es.jwtSecurityKotlin.repository.UsuarioRepository
@@ -25,20 +26,20 @@ class PrestamoLibroService {
     fun setPrestamo(username: String, libro: Libro): PrestamoLibro {
         // Comprobar si el usuario existe
         val usuario = usuarioRepository.findByUsername(username)
-            .orElseThrow { IllegalArgumentException("No se encontró un usuario con el nombre de usuario: $username") }
+            .orElseThrow { NotFoundException("No se encontró un usuario con el nombre de usuario: $username") }
 
         // Comprobar si el libro existe
         val libroExistente = libroRepository.findById(libro.id_libro!!)
-            .orElseThrow { IllegalArgumentException("No se encontró un libro con el ID: ${libro.id_libro}") }
+            .orElseThrow { NotFoundException("No se encontró un libro con el ID: ${libro.id_libro}") }
 
         // Comprobar si el usuario tiene un préstamo activo sin devolver
         if (prestamoLibroRepository.existsByUsuarioAndDevueltoFalse(usuario)) {
-            throw IllegalArgumentException("El usuario $username ya tiene un préstamo activo sin devolver.")
+            throw ConflictException("El usuario $username ya tiene un préstamo activo sin devolver.")
         }
 
         // Comprobar si el libro ya está siendo prestado y no ha sido devuelto
         if (prestamoLibroRepository.existsByLibroAndDevueltoFalse(libroExistente)) {
-            throw IllegalArgumentException("El libro con título '${libroExistente.titulo}' ya está siendo prestado.")
+            throw ConflictException("El libro con título '${libroExistente.titulo}' ya está siendo prestado.")
         }
 
         // Crear un nuevo préstamo con la fecha de préstamo actual y límite de devolución
@@ -63,11 +64,11 @@ class PrestamoLibroService {
     fun marcarComoDevuelto(prestamoId: Long): PrestamoLibro {
         // Buscar el préstamo por ID
         val prestamo = prestamoLibroRepository.findById(prestamoId)
-            .orElseThrow { IllegalArgumentException("No se encontró un préstamo con ID: $prestamoId") }
+            .orElseThrow {  NotFoundException("No se encontró un préstamo con ID: $prestamoId") }
 
         // Verificar si el préstamo ya está marcado como devuelto
         if (prestamo.devuelto) {
-            throw IllegalArgumentException("El préstamo con ID: $prestamoId ya está marcado como devuelto.")
+            throw ConflictException("El préstamo con ID: $prestamoId ya está marcado como devuelto.")
         }
 
         // Marcar como devuelto
@@ -83,7 +84,7 @@ class PrestamoLibroService {
     // Get prestamo por ID
     fun getPrestamoPorId(prestamoId: Long): PrestamoLibro {
         return prestamoLibroRepository.findById(prestamoId)
-            .orElseThrow { IllegalArgumentException("No se encontró un préstamo con ID: $prestamoId") }
+            .orElseThrow { NotFoundException("No se encontró un préstamo con ID: $prestamoId") }
     }
 
 }
