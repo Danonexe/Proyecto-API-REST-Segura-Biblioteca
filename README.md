@@ -14,8 +14,6 @@ Crear una API que gestione el préstamo de libros y el registro de usuarios y li
 ### **Justificación:**
 La aplicación permite controlar la gestión de usuarios, libros y préstamos, mejorando la eficiencia y la experiencia tanto de clientes como de empleados.
 
----
-
 ## Descripción de las Tablas
 
 ### **Usuarios**
